@@ -1,5 +1,6 @@
 package br.com.alura.servidor;
 
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -17,15 +18,33 @@ public class DistribuirTarefas implements Runnable {
 		System.out.println("Distribuindo taredas para o clitente" + socket.getPort());
 		try {
 			Scanner entradaCliente = new Scanner(socket.getInputStream());
-			
-			while(entradaCliente.hasNextLine()){
+			PrintStream saidaCliente = new PrintStream(socket.getOutputStream());
+
+			while (entradaCliente.hasNextLine()) {
 				String comando = entradaCliente.nextLine();
-				System.out.println(comando);
+				System.out.println("comando recebido " + comando);
+
+				switch (comando) {
+					case "c1": {
+						saidaCliente.println("confirmacao do comando c1");
+						break;
+					}
+					case "c2": {
+						saidaCliente.println("confirmacao do comando c2");
+						break;
+					}
+					default: {
+						saidaCliente.println("comando nao encontrado");
+					}
+				}
+				
 			}
-			
+
 			entradaCliente.close();
+			saidaCliente.close();
+			
 		} catch (Exception e) {
-			throw new RuntimeException(e); 
+			throw new RuntimeException(e);
 		}
 
 		System.out.println("Distribuido" + socket.getPort());
