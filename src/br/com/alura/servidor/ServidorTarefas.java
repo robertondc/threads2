@@ -39,8 +39,8 @@ public class ServidorTarefas {
 
 	public void parar() throws IOException {
 		this.estaRodando.set(false);
-		this.poolDeThreads.shutdown();
 		this.servidor.close();
+		this.poolDeThreads.shutdown();
 	}
 
 	public static void main(String[] args) throws Exception {
