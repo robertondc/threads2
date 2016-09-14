@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 public class DistribuirTarefas implements Runnable {
 
@@ -37,8 +39,14 @@ public class DistribuirTarefas implements Runnable {
 						break;
 					}
 					case "c2": {
-						ComandoC2 c2 = new ComandoC2(saidaCliente);
-						poolDeThreads.execute(c2);
+						saidaCliente.println("Confirmacao do comando c2");
+						ComandoC2ChamaWs c2Ws = new ComandoC2ChamaWs(saidaCliente);
+						ComandoC2AcessaBanco c2Banco = new ComandoC2AcessaBanco(saidaCliente);
+						
+						//passando os comandos para o pool, resultado eh um Future.
+						Future<String> futureWs = poolDeThreads.submit(c2Ws);
+						Future<String> futureBanco =  poolDeThreads.submit(c2Banco);
+						poolDeThreads.submit(new JuntaResultadosFutureWsFutureBanco(futureWs, futureBanco, saidaCliente));
 						
 						break;
 					}
